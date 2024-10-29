@@ -6,7 +6,55 @@ sources:
    tables:
      - name: product
        identifier: raw_gz_product
+       description: table containing each product and its purchase price
+       tests:
+         - unique:
+             column_name: "products_id"
+         - not_null:
+             column_name: "products_id"             
+       columns:
+         - name: products_id
+           description: id of each product - PK 
+         - name: purchse_price
+           description: purchase price of each product
      - name: sales
        identifier: raw_gz_sales
+       description: sales of Greenweez / we have one row per product_id found in each orders_id
+       freshness: 
+         warn_after:
+           count: 90
+           period: day
+       loaded_at_field: "CAST(date_date AS TIMESTAMP)"
+       columns:
+         - name: date_date
+           description: date of purchase
+         - name: orders_id
+           description: id of the order - PK with product
+         - name: products_id
+           description: id of the product included in the order - PK with orders
+         - name: revenue
+           description: revenue per product in the order
+         - name: quantity
+           description: nb of identical products in the order
+       tests:
+         - unique:
+             column_name: "(orders_id || '-' || pdt_id)"
+         - not_null:
+             column_name: "(orders_id || '-' || pdt_id)"
      - name: ship
        identifier: raw_gz_ship
+       description: ship fees per order at Greenweez including log cost, ship cost and shipping fees. PK=orders_id
+       tests:
+         - unique:
+             column_name: "orders_id"
+         - not_null:
+             column_name: "orders_id"
+       columns:
+         - name: orders_id
+           description: id of the order
+         - name: shipping_fee
+           description: cost of shipping per order (for the user)
+         - name: logcost
+           description: cost of logistics per order
+         - name: ship_cost
+           description: cost of shipment per order (for the company)
