@@ -1,5 +1,67 @@
 version: 2
-
+models:
+  - name: int_orders_margin
+    description: revenue, qty, purchase cost and margin per order
+    columns:
+      - name: orders_id
+        description: PK
+        tests:
+          - unique
+          - not_null
+      - name: revenue
+        description: revenue per order
+      - name: purchase_cost
+        description: purchase cost per order
+      - name: margin
+        description: margin (revenue-purchase cost) per order
+  - name: int_sales_margin
+    description: revenue, qty, purchase price, purchase cost and margin per product
+    columns:
+      - name: orders_id
+        description: PK with product ID
+      - name: products_id
+        description: PK with orders_id
+      - name: revenue
+        description: revenue per product per order
+      - name: quantity
+        description: number of identical products per order
+      - name: purchase_price
+        description: purchase price per product per order
+      - name: purchase_cost
+        description: purchase cost per product per order (=purchase price*qty)
+    tests:
+      - unique:
+          column_name: "(orders_id || '-' ||products_id)"
+      - not_null:
+          column_name: "(orders_id || '-' ||products_id)"
+  - name: int_orders_operational
+    description: margin and operational margin per order
+    columns:
+      - name: orders_id
+        description: PK
+        tests:
+          - unique
+          - not_null
+      - name: revenue
+        description: revenue per order
+      - name: quantity
+        description: quantity per order
+      - name: purchase_cost
+        description: purchase cost per order
+      - name: operational_margin
+        description: operational margin per order (margin+shipping fee-logcost-ship cost)
+  - name: finance_days.sql
+    description: nb of transactions, op.margin, revenue, average basket per day
+    columns:
+      - name: date_date
+        description: PK
+        tests:
+          - unique
+          - not_null
+      - name: nb_transactions
+        description: nb of transactions per day
+      - name: average_basket
+        description: average basket per day
 sources:
  - name: raw
    schema: gz_raw_data
