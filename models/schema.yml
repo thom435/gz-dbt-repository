@@ -62,6 +62,56 @@ models:
         description: nb of transactions per day
       - name: average_basket
         description: average basket per day
+  - name: int_campaigns.sql
+    description: costs, clicks and impressions per day and per type of campaign
+    columns:
+      - name: date_date
+        description: date of the campaign - PK with campaign key
+      - name: paid_source
+        description: type of paid source
+      - name: campaign_key
+        description: id of the campaign
+      - name: campaign_name
+        description: name of the campaign
+      - name: ads_cost
+        description: cost of each ad for the specified day and campaign
+      - name: impression
+        description: nb of impressions per day and campaign
+      - name: click
+        description: nb of impressions per day and campaign
+    tests:
+      - unique:
+          column_name: "(date_date || '-' || campaign_key)"
+      - not_null:
+          column_name: "(date_date || '-' || campaign_key)"
+  - name: int_campaigns_day.sql
+    description: costs, clicks and impressions per day for all campaigns
+    columns:
+      - name: date_date
+        description: day - PK
+        tests:
+          - unique
+          - not_null
+      - name: ads_cost
+        description: cost of ads per day
+      - name: ads_impression
+        description: nb of impressions per day
+      - name: ads_clicks
+        description: nb of clicks per day
+  - name: finance_campaign_days.sql
+    description: nb of transactions, op.margin, revenue, average basket and ads margin and all figures related to ads per day
+    columns:
+      - name: date_date
+        description: PK
+        tests:
+          - unique
+          - not_null
+      - name: ads_margin
+        description: operational margin - ads costs
+      - name: nb_transactions
+        description: nb of transactions per day
+      - name: average_basket
+        description: average basket per day
 sources:
  - name: raw
    schema: gz_raw_data
