@@ -120,3 +120,95 @@ sources:
            description: cost of logistics per order
          - name: ship_cost
            description: cost of shipment per order (for the company)
+     - name: adwords
+       identifier: raw_gz_adwords
+       description: costs, clicks and impressions per day and per campaign on adwords
+       columns:
+         - name: date_date
+           description: date of the campaign - PK with campaign key
+         - name: paid_source
+           description: type of paid source
+         - name: campaign_key
+           description: id of the campaign
+         - name: camPGN_name
+           description: name of the campaign
+         - name: ads_cost
+           description: cost of each ad for the specified day and campaign
+         - name: impression
+           description: nb of impressions per day and campaign
+         - name: click
+           description: nb of impressions per day and campaign
+       tests:
+         - unique:
+             column_name: "(date_date || '-' || campaign_key)"
+         - not_null:
+             column_name: "(date_date || '-' || campaign_key)"
+     - name: bing
+       identifier: raw_gz_bing
+       description: costs, clicks and impressions per day and per campaign on Bing
+       columns:
+         - name: date_date
+           description: date of the campaign - PK with campaign key
+         - name: paid_source
+           description: type of paid source
+         - name: campaign_key
+           description: id of the campaign
+         - name: camPGN_name
+           description: name of the campaign
+         - name: ads_cost
+           description: cost of each ad for the specified day and campaign
+         - name: impression
+           description: nb of impressions per day and campaign
+         - name: click
+           description: nb of impressions per day and campaign
+       tests:
+         - unique:
+             column_name: "(date_date || '-' || campaign_key)"
+         - not_null:
+             column_name: "(date_date || '-' || campaign_key)"
+     - name: criteo
+       identifier: raw_gz_criteo
+       description: costs, clicks and impressions per day and per campaign on Criteo
+       columns:
+         - name: date_date
+           description: date of the campaign - PK with campaign key
+         - name: paid_source
+           description: type of paid source
+         - name: campaign_key
+           description: id of the campaign
+         - name: camPGN_name
+           description: name of the campaign
+         - name: ads_cost
+           description: cost of each ad for the specified day and campaign
+         - name: impression
+           description: nb of impressions per day and campaign
+         - name: click
+           description: nb of impressions per day and campaign
+       tests:
+         - unique:
+             column_name: "(date_date || '-' || campaign_key)"
+         - not_null:
+             column_name: "(date_date || '-' || campaign_key)"
+     - name: facebook
+       identifier: raw_gz_facebook
+       description: costs, clicks and impressions per day and per campaign on Facebook
+       columns:
+         - name: date_date
+           description: date of the campaign - PK with campaign key
+         - name: paid_source
+           description: type of paid source
+         - name: campaign_key
+           description: id of the campaign
+         - name: camPGN_name
+           description: name of the campaign
+         - name: ads_cost
+           description: cost of each ad for the specified day and campaign
+         - name: impression
+           description: nb of impressions per day and campaign
+         - name: click
+           description: nb of impressions per day and campaign
+       tests:
+         - unique:
+             column_name: "(date_date || '-' || campaign_key)"
+         - not_null:
+             column_name: "(date_date || '-' || campaign_key)"
