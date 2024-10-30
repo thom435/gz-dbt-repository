@@ -1,0 +1,122 @@
+version: 2
+models:
+  - name: int_orders_margin
+    description: revenue, qty, purchase cost and margin per order
+    columns:
+      - name: orders_id
+        description: PK
+        tests:
+          - unique
+          - not_null
+      - name: revenue
+        description: revenue per order
+      - name: purchase_cost
+        description: purchase cost per order
+      - name: margin
+        description: margin (revenue-purchase cost) per order
+  - name: int_sales_margin
+    description: revenue, qty, purchase price, purchase cost and margin per product
+    columns:
+      - name: orders_id
+        description: PK with product ID
+      - name: products_id
+        description: PK with orders_id
+      - name: revenue
+        description: revenue per product per order
+      - name: quantity
+        description: number of identical products per order
+      - name: purchase_price
+        description: purchase price per product per order
+      - name: purchase_cost
+        description: purchase cost per product per order (=purchase price*qty)
+    tests:
+      - unique:
+          column_name: "(orders_id || '-' ||products_id)"
+      - not_null:
+          column_name: "(orders_id || '-' ||products_id)"
+  - name: int_orders_operational
+    description: margin and operational margin per order
+    columns:
+      - name: orders_id
+        description: PK
+        tests:
+          - unique
+          - not_null
+      - name: revenue
+        description: revenue per order
+      - name: quantity
+        description: quantity per order
+      - name: purchase_cost
+        description: purchase cost per order
+      - name: operational_margin
+        description: operational margin per order (margin+shipping fee-logcost-ship cost)
+  - name: finance_days.sql
+    description: nb of transactions, op.margin, revenue, average basket per day
+    columns:
+      - name: date_date
+        description: PK
+        tests:
+          - unique
+          - not_null
+      - name: nb_transactions
+        description: nb of transactions per day
+      - name: average_basket
+        description: average basket per day
+sources:
+ - name: raw
+   schema: gz_raw_data
+   tables:
+     - name: product
+       identifier: raw_gz_product
+       description: table containing each product and its purchase price
+       tests:
+         - unique:
+             column_name: "products_id"
+         - not_null:
+             column_name: "products_id"             
+       columns:
+         - name: products_id
+           description: id of each product - PK 
+         - name: purchse_price
+           description: purchase price of each product
+     - name: sales
+       identifier: raw_gz_sales
+       description: sales of Greenweez / we have one row per product_id found in each orders_id
+       freshness: 
+         warn_after:
+           count: 90
+           period: day
+       loaded_at_field: "CAST(date_date AS TIMESTAMP)"
+       columns:
+         - name: date_date
+           description: date of purchase
+         - name: orders_id
+           description: id of the order - PK with product
+         - name: products_id
+           description: id of the product included in the order - PK with orders
+         - name: revenue
+           description: revenue per product in the order
+         - name: quantity
+           description: nb of identical products in the order
+       tests:
+         - unique:
+             column_name: "(orders_id || '-' || pdt_id)"
+         - not_null:
+             column_name: "(orders_id || '-' || pdt_id)"
+     - name: ship
+       identifier: raw_gz_ship
+       description: ship fees per order at Greenweez including log cost, ship cost and shipping fees. PK=orders_id
+       tests:
+         - unique:
+             column_name: "orders_id"
+         - not_null:
+             column_name: "orders_id"
+       columns:
+         - name: orders_id
+           description: id of the order
+         - name: shipping_fee
+           description: cost of shipping per order (for the user)
+         - name: logcost
+           description: cost of logistics per order
+         - name: ship_cost
+           description: cost of shipment per order (for the company)
